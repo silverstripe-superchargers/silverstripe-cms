@@ -1567,7 +1567,7 @@ class SiteTree extends DataObject implements PermissionProvider, i18nEntityProvi
                 $this->URLSegment = "page-$this->ID";
             }
         }
-        
+
         // need to set the default values of a page e.g."Untitled [Page type]"
         if (empty($this->Title)) {
             $this->Title = _t(
@@ -2848,8 +2848,9 @@ class SiteTree extends DataObject implements PermissionProvider, i18nEntityProvi
     public function getIconClass()
     {
         if ($this->config()->get('icon')) {
-            return '';
+            return $this->config()->get('icon');
         }
+
         return $this->config()->get('icon_class');
     }
 
