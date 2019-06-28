@@ -2848,11 +2848,11 @@ class SiteTree extends DataObject implements PermissionProvider, i18nEntityProvi
     public function getIconClass()
     {
         if ($this->config()->uninherited('icon')) {
-            $icon = $this->config()->uninherited('icon');
+            $icon = sprintf('class-%s', Convert::raw2htmlid($this->ClassName));
         } else if ($this->config()->uninherited('icon_class')) {
             $icon = $this->config()->uninherited('icon_class');
         } else if ($this->config()->get('icon')) {
-            $icon = $this->config()->get('icon');
+            $icon = sprintf('class-%s', Convert::raw2htmlid($this->ClassName));
         } else {
             $icon = $this->config()->get('icon_class');
         }
@@ -2872,9 +2872,8 @@ class SiteTree extends DataObject implements PermissionProvider, i18nEntityProvi
         $children = $this->creatableChildPages();
         $flags = $this->getStatusFlags();
         $treeTitle = sprintf(
-            "<span class=\"jstree-pageicon page-icon %s class-%s\"></span><span class=\"item\" data-allowedchildren=\"%s\">%s</span>",
+            "<span class=\"jstree-pageicon page-icon %s\"></span><span class=\"item\" data-allowedchildren=\"%s\">%s</span>",
             $this->getIconClass(),
-            Convert::raw2htmlid(static::class),
             Convert::raw2att(json_encode($children)),
             Convert::raw2xml(str_replace(array("\n","\r"), "", $this->MenuTitle))
         );

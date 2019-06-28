@@ -43,25 +43,17 @@ class CMSPageAddController extends CMSPageEditController
     public function AddForm()
     {
         $pageTypes = array();
-        $defaultIcon = Config::inst()->get(SiteTree::class, 'icon_class');
 
         foreach ($this->PageTypes() as $type) {
             $class = $type->getField('ClassName');
-            $icon = Config::inst()->get($class, 'icon_class') ?: $defaultIcon;
-
-            // If the icon is the SiteTree default and there's some specific icon being provided by `getPageIconURL`
-            // then we don't need to add the icon class. Otherwise the class take precedence.
-            if ($icon === $defaultIcon && !empty(singleton($class)->getPageIconURL())) {
-                $icon = '';
-            }
 
             $html = sprintf(
-                '<span class="page-icon %s class-%s"></span><span class="title">%s</span><span class="form__field-description">%s</span>',
-                $icon,
-                Convert::raw2htmlid($class),
+                '<span class="page-icon %s"></span><span class="title">%s</span><span class="form__field-description">%s</span>',
+                singleton($class)->getIconClass(),
                 $type->getField('AddAction'),
                 $type->getField('Description')
             );
+
             $pageTypes[$class] = DBField::create_field('HTMLFragment', $html);
         }
         // Ensure generic page type shows on top
