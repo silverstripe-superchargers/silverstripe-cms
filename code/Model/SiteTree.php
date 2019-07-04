@@ -2841,7 +2841,10 @@ class SiteTree extends DataObject implements PermissionProvider, i18nEntityProvi
     }
 
     /**
-     * Returns the CSS class used for the page icon in the site tree.
+     * Returns the CSS class used for the page icon in the site tree. This is where all icon creation instances
+     * should be creating classes from (i.e. the source of truth). We identify first whether the current class
+     * has defined either an icon or icon_class. If neither it'll default to the closest inherited value of
+     * those configurations, first with icon and then icon_class.
      *
      * @return string
      */
