@@ -1567,7 +1567,7 @@ class SiteTree extends DataObject implements PermissionProvider, i18nEntityProvi
                 $this->URLSegment = "page-$this->ID";
             }
         }
-        
+
         // need to set the default values of a page e.g."Untitled [Page type]"
         if (empty($this->Title)) {
             $this->Title = _t(
@@ -2841,16 +2841,26 @@ class SiteTree extends DataObject implements PermissionProvider, i18nEntityProvi
     }
 
     /**
-     * Returns the CSS class used for the page icon in the site tree.
+     * Returns the CSS class used for the page icon in the site tree. This is where all icon creation instances
+     * should be creating classes from (i.e. the source of truth). We identify first whether the current class
+     * has defined either an icon or icon_class. If neither it'll default to the closest inherited value of
+     * those configurations, first with icon and then icon_class.
      *
      * @return string
      */
     public function getIconClass()
     {
-        if ($this->config()->get('icon')) {
-            return '';
+        if ($this->config()->uninherited('icon')) {
+            $icon = sprintf('class-%s', Convert::raw2htmlid($this->ClassName));
+        } else if ($this->config()->uninherited('icon_class')) {
+            $icon = $this->config()->uninherited('icon_class');
+        } else if ($this->config()->get('icon')) {
+            $icon = sprintf('class-%s', Convert::raw2htmlid($this->ClassName));
+        } else {
+            $icon = $this->config()->get('icon_class');
         }
-        return $this->config()->get('icon_class');
+
+        return $icon;
     }
 
     /**
@@ -2865,9 +2875,8 @@ class SiteTree extends DataObject implements PermissionProvider, i18nEntityProvi
         $children = $this->creatableChildPages();
         $flags = $this->getStatusFlags();
         $treeTitle = sprintf(
-            "<span class=\"jstree-pageicon page-icon %s class-%s\"></span><span class=\"item\" data-allowedchildren=\"%s\">%s</span>",
+            "<span class=\"jstree-pageicon page-icon %s\"></span><span class=\"item\" data-allowedchildren=\"%s\">%s</span>",
             $this->getIconClass(),
-            Convert::raw2htmlid(static::class),
             Convert::raw2att(json_encode($children)),
             Convert::raw2xml(str_replace(array("\n","\r"), "", $this->MenuTitle))
         );
